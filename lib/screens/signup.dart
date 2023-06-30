@@ -1,0 +1,71 @@
+import 'package:flutter/material.dart';
+import 'package:newlogin/reusable/reusewidget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:newlogin/screens/homeScreen.dart';
+
+class SignUp extends StatefulWidget {
+  const SignUp({Key? key}) : super(key: key);
+
+  @override
+  State<SignUp> createState() => _SignUpState();
+}
+
+class _SignUpState extends State<SignUp> {
+  TextEditingController _passwordTextController=TextEditingController();
+  TextEditingController _emailTextController=TextEditingController();
+  TextEditingController _usernameTextController=TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+          title: const Text(
+            'Sign Up',
+            style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+      ),
+      body: Container(
+        width:MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [
+            Colors.lightBlueAccent,
+            Colors.purpleAccent,
+            Colors.pinkAccent,
+          ],
+          begin: Alignment.topCenter,end: Alignment.bottomCenter
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 120, 20, 0),
+            child: Column(
+              children: <Widget>[
+                const SizedBox(height: 20),
+                resuableTextField("Enter Username",Icons.person_outline,false,_usernameTextController),
+                const SizedBox(height: 20),
+                resuableTextField("Enter E-mail",Icons.email_outlined,false,_emailTextController),
+                const SizedBox(height: 20,),
+                resuableTextField("Enter Password",Icons.lock_outline_sharp,false,_passwordTextController),
+                const SizedBox(height: 20),
+                firebaseUIButton(context, "Sign Up", (){
+                  FirebaseAuth.instance.createUserWithEmailAndPassword(email: _emailTextController.text, password: _passwordTextController.text).then((value){
+                    print("Created New Account");
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=>HomeScreen()));
+                  }).onError((error,stackTrace){
+                    print("Error${error.toString()}");
+                  });
+                })
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
